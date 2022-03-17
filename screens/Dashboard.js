@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,ScrollView } from 'react-native'
+import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,FlatList } from 'react-native'
 import Constants from 'expo-constants'
 import React from 'react';
 import colors from '../assets/colors/colors';
@@ -10,14 +10,17 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const data = [
-  {id:1,title:'Company',subtitle:'View or create a company',image:'open-outline'},
-  {id:2,title:'Attendance',subtitle:'View attendance details',image:'people-outline'},
-  {id:3,title:'Schedule',subtitle:'View or create your schedule',image:'md-stopwatch-outline'},
-  {id:4,title:'Status Report',subtitle:'View or download status report',image:'analytics-outline'},
-  {id:5,title:'Hyperlinks',subtitle:'View or create a hyperlink',image:'link-outline'},
+  {id:1,title:'Company',subtitle:'View or create a company',image:'open-outline', link:'Company'},
+  {id:2,title:'Attendance',subtitle:'View attendance details',image:'people-outline',link:'Attendance'},
+  {id:3,title:'Schedule',subtitle:'View or create your schedule',image:'md-stopwatch-outline',link:'Schedule'},
+  {id:4,title:'Status Report',subtitle:'View or download status report',image:'analytics-outline',link:'StatusReport'},
+  {id:5,title:'Hyperlinks',subtitle:'View or create a hyperlink',image:'link-outline',link:'Hyperlinks'},
 ]
 
 const Dashboard = ({navigation}) => {
+  const renderItem = ({ item }) => (
+    <SmallCard title={item.title} subtitle={item.subtitle} image={item.image} key={item.id} navigation={navigation} link={item.link} />
+  );
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
@@ -42,15 +45,15 @@ const Dashboard = ({navigation}) => {
         source={require('../assets/Groupdashboard.png')}
         />
       </View>
-      <ScrollView>
         <View style={styles.bodyHeight}>
           <View style={tw`mt-4`}>
-            {
-              data.map((details) => <SmallCard title={details.title} subtitle={details.subtitle} image={details.image} key={details.id} navigation={navigation}/>)
-            }
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
           </View>
         </View>
-      </ScrollView>
     </SafeAreaView>
   )
 }
