@@ -17,7 +17,7 @@ const data = [
   {id:5,title:'Hyperlinks',subtitle:'View or create a hyperlink',image:'link-outline'},
 ]
 
-const Dashboard = () => {
+const Dashboard = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
@@ -31,7 +31,7 @@ const Dashboard = () => {
         from your fingertip!
         </Text>
       </View>
-      <View style={{marginTop:20,alignItems:'center',marginRight:30,flexDirection:'row',justifyContent:'space-between'}}>
+      <View style={{alignItems:'center',marginRight:30,flexDirection:'row',justifyContent:'space-between'}}>
         <View style={[tw`border-b-4 border-[#D46200]`,{marginLeft:20}]}>
           <Text style={[tw`text-3xl text-black`,{fontFamily:'DMSans-Bold'}]}>
             Dashboard
@@ -46,7 +46,7 @@ const Dashboard = () => {
         <View style={styles.bodyHeight}>
           <View style={tw`mt-4`}>
             {
-              data.map((details) => <SmallCard title={details.title} subtitle={details.subtitle} image={details.image} key={details.id}/>)
+              data.map((details) => <SmallCard title={details.title} subtitle={details.subtitle} image={details.image} key={details.id} navigation={navigation}/>)
             }
           </View>
         </View>

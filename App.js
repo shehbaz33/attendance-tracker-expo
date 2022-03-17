@@ -6,6 +6,7 @@ import fetchFonts from './useFonts';
 import colors from './assets/colors/colors';
 import Dashboard from './screens/Dashboard';
 import Login from './screens/Login';
+import Company from './screens/Company';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { store } from './redux/store';
@@ -34,11 +35,15 @@ function App () {
     <NavigationContainer>
         <Stack.Navigator>
           {
-            token ?
-              <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
-            : <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
+            !token ? (
+              <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
+            ) : (
+              <>
+                <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
+                <Stack.Screen name="Company" component={Company} options={{headerShown:false}} />
+              </>
+            )
           }
-            
         </Stack.Navigator>
     </NavigationContainer>
   );

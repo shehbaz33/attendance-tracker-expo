@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View,Image } from 'react-native';
+import { StyleSheet, Text, View,Image,Pressable } from 'react-native';
 import React from 'react';
 import tw from 'twrnc';
 import colors from '../assets/colors/colors';
 import { Feather,Ionicons } from '@expo/vector-icons';
 
-const smallCard = ({title,subtitle,image}) => {
+const smallCard = ({title,subtitle,image,navigation}) => {
   return (
     <View style={{height:60,backgroundColor:colors.background,marginTop:20,marginLeft:30,marginRight:30,borderRadius:10,justifyContent:'center',borderLeftWidth:3,borderLeftColor:colors.accents}}>
       <View style={[tw`m-0`,{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
@@ -19,9 +19,11 @@ const smallCard = ({title,subtitle,image}) => {
                 {subtitle}
             </Text>
         </View>
-        <View style={styles.rounded}>
-            <Feather name='chevron-right' size={22} color="white" />
-        </View>
+        <Pressable onPress={() => navigation.navigate('Company')}>
+          <View style={styles.rounded}>
+              <Feather name='chevron-right' size={22} color="white" />
+          </View>
+        </Pressable>
       </View>
     </View>
   )
