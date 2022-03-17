@@ -39,7 +39,7 @@ function App () {
     <NavigationContainer>
         <Stack.Navigator>
           {
-            !token ? (
+            token ? (
               <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
             ) : (
               <>

@@ -1,22 +1,22 @@
-import { StyleSheet, Text, View,SafeAreaView,Image,FlatList } from 'react-native'
+import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable } from 'react-native'
 import Constants from 'expo-constants'
 import React from 'react'
 import colors from '../assets/colors/colors';
 import tw from 'twrnc';
-import SmallCard from '../components/SmallCard';
+import AttendanceCard from '../components/AttendanceCard';
 import { Dimensions } from 'react-native';
 const windowHeight = Dimensions.get('window').height;
+import { Ionicons } from '@expo/vector-icons';
 
-const Attendance = () => {
+const Attendance = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
     <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
-      <View>
-          <Image 
-          style={styles.image}
-          source={{uri:'https://www.greatplacetowork.in/wp-content/uploads/2021/11/GPTW-Corporate-logo-1.png'}}
-          />
-      </View>
+      <Pressable onPress={() => navigation.navigate('Dashboard')}>
+        <View style={styles.square}>
+            <Ionicons name='chevron-back' size={22}/>
+        </View>
+      </Pressable>
       <Text style={styles.textStyle}>Manage Users{"\n"}
       from your fingertip!
       </Text>
@@ -28,13 +28,16 @@ const Attendance = () => {
         </Text>
       </View>
       <Image
-      style={{width:120,height:180}}
-      source={require('../assets/Groupdashboard.png')}
+      style={{width:180,height:180}}
+      source={require('../assets/attendance.png')}
       />
     </View>
       <View style={styles.bodyHeight}>
         <View style={tw`mt-4`}>
-          <SmallCard/>
+          <AttendanceCard/>
+          <AttendanceCard/>
+          <AttendanceCard/>
+          <AttendanceCard/>
         </View>
       </View>
   </SafeAreaView>
@@ -64,5 +67,20 @@ const styles = StyleSheet.create({
   bodyHeight:{
     height: windowHeight,
     backgroundColor: 'white',
+  },
+  square:{
+    height: 40,
+    marginRight:15,
+    width: 40,
+    backgroundColor: 'white',
+    borderRadius:10,
+    justifyContent:'center',
+    alignItems:'center',
+    marginLeft:30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation:2
   }
 })
