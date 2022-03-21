@@ -4,22 +4,22 @@ import tw from 'twrnc';
 import colors from '../assets/colors/colors';
 import { Feather,Ionicons } from '@expo/vector-icons';
 
-const smallCard = ({title,subtitle,image,navigation,link}) => {
+const smallCard = ({item,navigation}) => {
   return (
     <View style={{height:70,backgroundColor:colors.background,marginTop:20,marginLeft:30,marginRight:30,borderRadius:10,justifyContent:'center',borderLeftWidth:3,borderLeftColor:colors.accents}}>
       <View style={[tw`m-0`,{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}]}>
         <View style={{width:180,marginLeft:30}}>
             <Text style={styles.textDetails}>
-                Shehbaz Sayed
+               {item.name}
             </Text>
             <Text style={{fontSize:12,color:colors.textSecondary,fontFamily:'DMSans-Regular'}}>
-                Great Place to Work
+                {item.company}
             </Text>
             <Text style={{fontSize:12,color:colors.accents,fontFamily:'DMSans-Regular'}}>
-                Work from home
+                {item.status}
             </Text>
         </View>
-        <Pressable onPress={() => navigation.navigate(link)}>
+        <Pressable onPress={() => navigation.navigate('AttendanceDetails',{item})}>
           <View style={styles.square}>
               <Text style={[tw`text-xl text-black`,{fontFamily:'DMSans-Regular'}]}>P</Text>
           </View>

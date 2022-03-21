@@ -5,6 +5,9 @@ import colors from '../assets/colors/colors';
 import tw from 'twrnc';
 import { Dimensions } from 'react-native';
 import SmallCard from '../components/SmallCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -17,7 +20,10 @@ const data = [
   {id:5,title:'Hyperlinks',subtitle:'View or create a hyperlink',image:'link-outline',link:'Hyperlinks'},
 ]
 
+
 const Dashboard = ({navigation}) => {
+  const [token,setToken] = useState(null)
+ 
   const renderItem = ({ item }) => (
     <SmallCard title={item.title} subtitle={item.subtitle} image={item.image} key={item.id} navigation={navigation} link={item.link} />
   );

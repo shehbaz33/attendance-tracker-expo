@@ -26,17 +26,13 @@
  import colors from '../assets/colors/colors';
  import axios from 'axios';
  import { useSelector, useDispatch } from 'react-redux';
- import {updateStart,updateSuccess,updateError} from '../redux/userSlice'
+ import {updateStart,updateSuccess,updateError} from '../redux/userSlice';
+ import AsyncStorage from '@react-native-async-storage/async-storage';
 
  let loginValidationSchema = yup.object().shape({
      email: yup.string().email('Please enter a valid email').required('Required'),
      password: yup.string().required('Required')
  })
-
-//  {
-//   "email":"sb@123.com",
-//  "password":"123456"
-// }
  
  const Login = ({navigation}) => {
    const [error,setError] = useState('')
@@ -63,6 +59,14 @@
               })
               .then((res) => {
                 dispatch(updateSuccess(res.data.token))
+                const storeData = async () => {
+                  try {
+                    await AsyncStorage.setItem('token', res.data.token)
+                  } catch (e) {
+                    console.log(e)
+                  }
+                }
+                storeData()
               })
               .catch((err) => {
                 dispatch(updateError())
