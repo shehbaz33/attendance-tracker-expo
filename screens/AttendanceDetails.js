@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable } from 'react-native'
+import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable,Alert } from 'react-native'
 import Constants from 'expo-constants'
-import React from 'react'
+import React,{useEffect} from 'react'
 import colors from '../assets/colors/colors';
 import tw from 'twrnc';
 import { Dimensions } from 'react-native';
@@ -8,16 +8,65 @@ import {Dropdown} from '../components/Dropdown';
 const windowHeight = Dimensions.get('window').height;
 import { Feather,Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import axios from 'axios';
+import FlashMessage,{showMessage, hideMessage} from "react-native-flash-message";
+import { useDispatch,useSelector } from 'react-redux';
+import {AttendanceUpdateStart,AttendanceUpdateSuccess,AttendanceUpdateError} from '../redux/attendanceSlice'
 
 const AttendanceDetails = (props) => {
   const [edit,setEdit] = useState(false)
   const [value, setValue] = useState(null);
-  const {item} = props.route.params
-  const navigation = props.navigation
-  const handleUpdate = () => {
-    console.log('Clicked')
+  const [updated,setUpdated] = useState(false)
+  const {item} = props.route.params;
+  const dispatch = useDispatch();
+  const {token} =props.route.params;
+  const navigation = props.navigation;
+  const status = {
+    "status": value
   }
+
+  const handleUpdate = async() => {
+    await axios({
+      method: 'put',
+      url:`http://192.168.0.175:5000/api/v1/attendance/${item.id}`,
+      headers: {token: token},
+      data: status,
+     })
+     .then((res) => {
+      showMessage({
+        message: 'Updated successfully',
+        type: "success",
+        style:{
+          fontFamily:'DMSans-Regular'
+        },
+      });
+      setUpdated(!updated)
+     })
+     .catch((err) => {
+       console.log(err.response)
+     })
+  }
+
+  const getAllAttendance = async () => {
+    dispatch(AttendanceUpdateStart())
+    await axios({
+      method: 'get',
+      url:'http://192.168.0.175:5000/api/v1/todaysattendance',
+      headers: {token: token}
+     })
+     .then((res) => {
+       dispatch(AttendanceUpdateSuccess(res.data.attendance))
+     })
+     .catch((err) => {
+       dispatch(AttendanceUpdateError())
+       console.log(err.response.data)
+     })
+  }
+
+  useEffect(() =>{
+    getAllAttendance()
+  },[updated])
+
   return (
     <SafeAreaView style={styles.container}>
     <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
@@ -51,7 +100,7 @@ const AttendanceDetails = (props) => {
         </View>
         <View style={styles.textBackground}>
           <Text style={styles.header}>Company</Text>
-          <Text style={styles.details}>{item.company}</Text>
+          <Text style={styles.details}>{item.company_name}</Text>
         </View>
         {
           edit ? (
@@ -64,7 +113,7 @@ const AttendanceDetails = (props) => {
           ) : (
             <View style={styles.textBackground}>
               <Text style={styles.header}>Status</Text>
-              <Text style={styles.details}>{item.status}</Text>
+              <Text style={styles.details}>{item.attendance_type}</Text>
             </View>
           )
         }
@@ -92,6 +141,7 @@ const AttendanceDetails = (props) => {
             </View>
           ) : null}
       </View>
+      <FlashMessage position="top" />
   </SafeAreaView>
   )
 }

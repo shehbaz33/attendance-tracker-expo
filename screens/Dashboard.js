@@ -15,7 +15,7 @@ const windowHeight = Dimensions.get('window').height;
 const data = [
   {id:1,title:'Company',subtitle:'View or create a company',image:'open-outline', link:'Company'},
   {id:2,title:'Attendance',subtitle:'View attendance details',image:'people-outline',link:'Attendance'},
-  {id:3,title:'Schedule',subtitle:'View or create your schedule',image:'md-stopwatch-outline',link:'Schedule'},
+  {id:3,title:'Notification',subtitle:'View or create your notification',image:'md-stopwatch-outline',link:'Notification'},
   {id:4,title:'Status Report',subtitle:'View or download status report',image:'analytics-outline',link:'StatusReport'},
   {id:5,title:'Hyperlinks',subtitle:'View or create a hyperlink',image:'link-outline',link:'Hyperlinks'},
 ]

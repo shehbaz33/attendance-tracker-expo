@@ -9,7 +9,7 @@ import Login from './screens/Login';
 import Company from './screens/Company';
 import Attendance from './screens/Attendance';
 import Hyperlinks from './screens/Hyperlinks';
-import Schedule from './screens/Schedule';
+import Notification from './screens/Notification';
 import StatusReport from './screens/StatusReport';
 import AttendanceDetails from './screens/AttendanceDetails';
 import { NavigationContainer } from '@react-navigation/native';
@@ -60,11 +60,11 @@ function App () {
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
                 <Stack.Screen name="Company" component={Company} options={{headerShown:false}} />
-                <Stack.Screen name="Attendance" component={Attendance} options={{headerShown:false}} />
+                <Stack.Screen name="Attendance" component={Attendance} options={{headerShown:false}} initialParams={{ token:localToken }}/>
                 <Stack.Screen name="Hyperlinks" component={Hyperlinks} options={{headerShown:false}} />
-                <Stack.Screen name="Schedule" component={Schedule} options={{headerShown:false}} />
+                <Stack.Screen name="Notification" component={Notification} options={{headerShown:false}} />
                 <Stack.Screen name="StatusReport" component={StatusReport} options={{headerShown:false}} />
-                <Stack.Screen name="AttendanceDetails" component={AttendanceDetails} options={{headerShown:false}} />
+                <Stack.Screen name="AttendanceDetails" component={AttendanceDetails} options={{headerShown:false}} initialParams={{ token:localToken }} />
               </>
             )
           }

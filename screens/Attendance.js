@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable } from 'react-native'
+import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable,ActivityIndicator } from 'react-native'
 import Constants from 'expo-constants'
 import React,{useEffect} from 'react'
 import colors from '../assets/colors/colors';
@@ -9,50 +9,37 @@ const windowHeight = Dimensions.get('window').height;
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch,useSelector } from 'react-redux';
+import {AttendanceUpdateStart,AttendanceUpdateSuccess,AttendanceUpdateError} from '../redux/attendanceSlice'
 
-const data = [
-  {id:1,name:'Shehbaz Sayed',company:'Great Place to Work', status:'Work from home'},
-  {id:2,name:'Faizan Shaikh',company:'Great Place to Work', status:'Work from home'},
-  {id:3,name:'Omkar Lanjekar',company:'Great Place to Work', status:'Work from home'},
-  {id:4,name:'Swati Inje',company:'Great Place to Work', status:'Leave without pay'},
-]
-
-
-const Attendance = ({navigation}) => {
-  const [token,setToken] = useState()
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('token')
-        if(value !== null) {
-          setToken(value)
-        }
-      } catch(e) {
-        console.log(e)
-      }
-    }
-
-    useEffect(() =>{
-      getData();
-    },[])
+const Attendance = ({navigation,route}) => {
+  const {token} = route.params
+  const dispatch = useDispatch()
 
     const getAllAttendance = async () => {
+      dispatch(AttendanceUpdateStart())
       await axios({
         method: 'get',
-        url:'http://192.168.0.175:5000/api/v1/attendance',
+        url:'http://192.168.0.175:5000/api/v1/todaysattendance',
         headers: {token: token}
        })
        .then((res) => {
-         console.log(res.data)
+         dispatch(AttendanceUpdateSuccess(res.data.attendance))
        })
        .catch((err) => {
+         dispatch(AttendanceUpdateError())
          console.log(err.response.data)
        })
     }
 
+    const date = new Date()
+
+    const data = useSelector((state) => state.attendance.attendance)
+
     useEffect(() =>{
       getAllAttendance()
     },[token])
+
   return (
     <SafeAreaView style={styles.container}>
     <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
@@ -78,13 +65,27 @@ const Attendance = ({navigation}) => {
     </View>
       <View style={styles.bodyHeight}>
         <View style={tw`mt-4`}>
-          <FlatList
-                data={data}
-                renderItem={({item}) => (
-                  <AttendanceCard item={item} navigation={navigation}/>
-                )}
-                keyExtractor={item => item.id}
-          />
+            <Text style={{color:colors.textSecondary,marginLeft:30,fontSize:14,fontFamily:'DMSans-Regular'}}>Showing attendance for, {date.toDateString()}</Text>
+        </View>
+        <View>
+          {
+            !data ? (
+              <View style={{flex: 1,
+                marginTop:50,
+                justifyContent: "center"}}>
+                <ActivityIndicator size="large" color="#D46200" />
+              </View>
+            ) : (
+            <FlatList
+              data={data}
+              renderItem={({item}) => (
+                <AttendanceCard item={item} navigation={navigation}/>
+              )}
+              keyExtractor={item => item.id}
+              extraData={data}
+            />
+            )
+          }
         </View>
       </View>
   </SafeAreaView>
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   bodyHeight:{
     height: windowHeight,
     backgroundColor: 'white',
-    borderRadius:25
+    borderRadius:25,
   },
   square:{
     height: 40,
