@@ -67,6 +67,7 @@
                   }
                 }
                 storeData()
+                navigation.navigate('Dashboard')
               })
               .catch((err) => {
                 dispatch(updateError())
