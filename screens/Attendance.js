@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import {AttendanceUpdateStart,AttendanceUpdateSuccess,AttendanceUpdateError} from '../redux/attendanceSlice'
+import Empty from '../components/Empty';
 
 const Attendance = ({navigation,route}) => {
   const {token} = route.params
@@ -20,7 +21,7 @@ const Attendance = ({navigation,route}) => {
       dispatch(AttendanceUpdateStart())
       await axios({
         method: 'get',
-        url:'http://192.168.0.175:5000/api/v1/todaysattendance',
+        url:'http://172.25.5.86:5000/api/v1/todaysattendance',
         headers: {token: token}
        })
        .then((res) => {
@@ -28,13 +29,13 @@ const Attendance = ({navigation,route}) => {
        })
        .catch((err) => {
          dispatch(AttendanceUpdateError())
-         console.log(err.response.data)
        })
     }
 
     const date = new Date()
 
     const data = useSelector((state) => state.attendance.attendance)
+    const loading = useSelector((state) => state.attendance.pending)
 
     useEffect(() =>{
       getAllAttendance()
@@ -69,21 +70,25 @@ const Attendance = ({navigation,route}) => {
         </View>
         <View>
           {
-            !data ? (
+            loading ? (
               <View style={{flex: 1,
                 marginTop:50,
                 justifyContent: "center"}}>
                 <ActivityIndicator size="large" color="#D46200" />
               </View>
             ) : (
-            <FlatList
-              data={data}
-              renderItem={({item}) => (
-                <AttendanceCard item={item} navigation={navigation}/>
-              )}
-              keyExtractor={item => item.id}
-              extraData={data}
-            />
+              data.length == 0 ? (
+                <Empty title={'No attendance marked yet'}/>
+              ) : (
+                <FlatList
+                data={data}
+                renderItem={({item}) => (
+                  <AttendanceCard item={item} navigation={navigation}/>
+                )}
+                keyExtractor={item => item.id}
+                extraData={data}
+              />
+              )
             )
           }
         </View>

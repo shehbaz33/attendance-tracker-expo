@@ -17,7 +17,7 @@
    TextInput,
    Button,
    useColorScheme,
-   Pressable,
+   TouchableOpacity,
    View,
    Image
  } from 'react-native';
@@ -53,7 +53,7 @@
              dispatch(updateStart())
              await axios({
                method: 'post',
-               url:'http://192.168.0.175:5000/api/v1/login',
+               url:'http://172.25.5.86:5000/api/v1/login',
                data: values,
                headers: {"Content-Type": "application/json"}
               })
@@ -98,14 +98,14 @@
                     <Text style={styles.error}>{errors.password}</Text>
                     : null}
                     <View style={{marginLeft:30,marginRight:30}}>
-                        <Pressable style={[styles.button,{
+                        <TouchableOpacity style={[styles.button,{
                             backgroundColor: isValid ? '#373A4E' : '#CACFD2'
                         }]}
                          onPress={handleSubmit}
                          disabled={!isValid}
                          >
                         <Text style={styles.text}>Login</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
                     <Text style={styles.error}>{error ? error : null}</Text>
                 </View>

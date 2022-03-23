@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,FlatList } from 'react-native'
+import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,FlatList,ScrollView } from 'react-native'
 import Constants from 'expo-constants'
 import React from 'react';
 import colors from '../assets/colors/colors';
@@ -53,11 +53,11 @@ const Dashboard = ({navigation}) => {
       </View>
         <View style={styles.bodyHeight}>
           <View style={tw`mt-4`}>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
+              <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+              />
           </View>
         </View>
     </SafeAreaView>
