@@ -110,7 +110,7 @@
                     <Text style={styles.error}>{error ? error : null}</Text>
                 </View>
             )}
-            </Formik>
+          </Formik>
          </View>
      </SafeAreaView>
    );
