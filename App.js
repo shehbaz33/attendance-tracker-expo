@@ -19,12 +19,14 @@ import { Provider } from 'react-redux';
 const Stack = createNativeStackNavigator();
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {updateStart,updateSuccess,updateError} from './redux/userSlice';
 
 
 function App () {
   const [dataLoaded,setDataLoaded] = useState(false)
+  const dispatch = useDispatch();
   const [localToken,setLocalToken] = useState()
-  const token = useSelector((state) => state.user.token)
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn)
   const loadFont = async () => {
     await fetchFonts();
   }
@@ -41,7 +43,7 @@ function App () {
       try {
         const value = await AsyncStorage.getItem('token')
         if(value !== null) {
-          setLocalToken(value)
+          dispatch(updateSuccess(value))
         }
       } catch(e) {
         console.log(e)
@@ -54,10 +56,8 @@ function App () {
     <NavigationContainer>
         <Stack.Navigator>
           {
-            !localToken ? (
-              <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
-            ) : (
-              <>
+            isLoggedIn ? (
+              <Stack.Group>
                 <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
                 <Stack.Screen name="Company" component={Company} options={{headerShown:false}} initialParams={{ token:localToken }} />
                 <Stack.Screen name="Attendance" component={Attendance} options={{headerShown:false}} initialParams={{ token:localToken }}/>
@@ -65,6 +65,10 @@ function App () {
                 <Stack.Screen name="Notification" component={Notification} options={{headerShown:false}} />
                 <Stack.Screen name="StatusReport" component={StatusReport} options={{headerShown:false}} />
                 <Stack.Screen name="AttendanceDetails" component={AttendanceDetails} options={{headerShown:false}} initialParams={{ token:localToken }} />
+              </Stack.Group>
+            ) : (
+              <>
+                <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
               </>
             )
           }

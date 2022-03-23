@@ -4,16 +4,19 @@ import React,{useEffect} from 'react'
 import colors from '../assets/colors/colors';
 import tw from 'twrnc';
 import AttendanceCard from '../components/AttendanceCard';
+import { useIsFocused } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 const windowHeight = Dimensions.get('window').height;
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import {AttendanceUpdateStart,AttendanceUpdateSuccess,AttendanceUpdateError} from '../redux/attendanceSlice'
 import Empty from '../components/Empty';
 
 const Attendance = ({navigation,route}) => {
+  const isFocused = useIsFocused();
   const {token} = route.params
   const dispatch = useDispatch()
 
@@ -40,7 +43,8 @@ const Attendance = ({navigation,route}) => {
 
     useEffect(() =>{
       getAllAttendance()
-    },[token])
+    },[token,isFocused])
+    
 
     const checkEmpty = () => {
       if(loading){

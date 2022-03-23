@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,FlatList,ScrollView } from 'react-native'
+import { StyleSheet, Text, View, StatusBar,SafeAreaView,Image,FlatList,ScrollView,TouchableOpacity } from 'react-native'
 import Constants from 'expo-constants'
 import React from 'react';
 import colors from '../assets/colors/colors';
@@ -8,6 +8,9 @@ import SmallCard from '../components/SmallCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import {logoutStart,logoutSuccess,logoutError} from '../redux/userSlice'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -21,8 +24,15 @@ const data = [
 ]
 
 
-const Dashboard = ({navigation}) => {
+const Dashboard = () => {
+  const dispatch = useDispatch()
   const [token,setToken] = useState(null)
+  const navigation = useNavigation() 
+
+  const handleLogout = async () => {
+      dispatch(logoutSuccess())
+      await AsyncStorage.clear();
+  }
  
   const renderItem = ({ item }) => (
     <SmallCard title={item.title} subtitle={item.subtitle} image={item.image} key={item.id} navigation={navigation} link={item.link} />
@@ -30,12 +40,14 @@ const Dashboard = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginTop:20,flexDirection:'row',justifyContent:'space-between'}}>
-        <View>
-            <Image 
-            style={styles.image}
-            source={{uri:'https://www.greatplacetowork.in/wp-content/uploads/2021/11/GPTW-Corporate-logo-1.png'}}
-            />
-        </View>
+        <TouchableOpacity onPress={() => handleLogout()}>
+          <View>
+              <Image 
+              style={styles.image}
+              source={{uri:'https://www.greatplacetowork.in/wp-content/uploads/2021/11/GPTW-Corporate-logo-1.png'}}
+              />
+          </View>
+        </TouchableOpacity>
         <Text style={styles.textStyle}>Manage Users{"\n"}
         from your fingertip!
         </Text>
