@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const attendanceSlice = createSlice({
   name: "attendance",
   initialState: {
-    attendance: null,
+    attendance: [],
     pending: false,
     error: false,
   },

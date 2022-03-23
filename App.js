@@ -59,7 +59,7 @@ function App () {
             ) : (
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
-                <Stack.Screen name="Company" component={Company} options={{headerShown:false}} />
+                <Stack.Screen name="Company" component={Company} options={{headerShown:false}} initialParams={{ token:localToken }} />
                 <Stack.Screen name="Attendance" component={Attendance} options={{headerShown:false}} initialParams={{ token:localToken }}/>
                 <Stack.Screen name="Hyperlinks" component={Hyperlinks} options={{headerShown:false}} />
                 <Stack.Screen name="Notification" component={Notification} options={{headerShown:false}} />

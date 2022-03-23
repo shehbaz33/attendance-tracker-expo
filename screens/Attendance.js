@@ -29,6 +29,7 @@ const Attendance = ({navigation,route}) => {
        })
        .catch((err) => {
          dispatch(AttendanceUpdateError())
+         console.log(err.response.data)
        })
     }
 
@@ -40,6 +41,32 @@ const Attendance = ({navigation,route}) => {
     useEffect(() =>{
       getAllAttendance()
     },[token])
+
+    const checkEmpty = () => {
+      if(loading){
+        return (
+          <View style={{flex: 1,
+            marginTop:50,
+            justifyContent: "center"}}>
+            <ActivityIndicator size="large" color="#D46200" />
+          </View>
+        )
+      } else if (data.length==0){
+        return(
+          <Empty title={'No attendance marked yet'}/>
+        )
+      } 
+      return (
+        <FlatList
+          data={data}
+          renderItem={({item}) => (
+            <AttendanceCard item={item} navigation={navigation}/>
+          )}
+          keyExtractor={item => item.id}
+          extraData={data}
+        />
+      )
+    }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,26 +97,7 @@ const Attendance = ({navigation,route}) => {
         </View>
         <View>
           {
-            loading ? (
-              <View style={{flex: 1,
-                marginTop:50,
-                justifyContent: "center"}}>
-                <ActivityIndicator size="large" color="#D46200" />
-              </View>
-            ) : (
-              data.length == 0 ? (
-                <Empty title={'No attendance marked yet'}/>
-              ) : (
-                <FlatList
-                data={data}
-                renderItem={({item}) => (
-                  <AttendanceCard item={item} navigation={navigation}/>
-                )}
-                keyExtractor={item => item.id}
-                extraData={data}
-              />
-              )
-            )
+            checkEmpty()
           }
         </View>
       </View>

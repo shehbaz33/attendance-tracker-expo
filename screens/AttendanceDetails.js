@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable,Alert } from 'react-native'
+import { StyleSheet, Text, View,SafeAreaView,Image,FlatList,Pressable,Alert,TouchableOpacity } from 'react-native'
 import Constants from 'expo-constants'
 import React,{useEffect} from 'react'
 import colors from '../assets/colors/colors';
@@ -24,11 +24,13 @@ const AttendanceDetails = (props) => {
   const status = {
     "status": value
   }
-
+  
+  const id = item.id
+ 
   const handleUpdate = async() => {
     await axios({
       method: 'put',
-      url:`http://192.168.0.175:5000/api/v1/attendance/${item.id}`,
+      url:`http://172.25.5.86:5000/api/v1/attendance/${id}`,
       headers: {token: token},
       data: status,
      })
@@ -39,33 +41,12 @@ const AttendanceDetails = (props) => {
         style:{
           fontFamily:'DMSans-Regular'
         },
-      });
-      setUpdated(!updated)
+      })
      })
      .catch((err) => {
-       console.log(err.response)
+       console.log(err)
      })
   }
-
-  const getAllAttendance = async () => {
-    dispatch(AttendanceUpdateStart())
-    await axios({
-      method: 'get',
-      url:'http://192.168.0.175:5000/api/v1/todaysattendance',
-      headers: {token: token}
-     })
-     .then((res) => {
-       dispatch(AttendanceUpdateSuccess(res.data.attendance))
-     })
-     .catch((err) => {
-       dispatch(AttendanceUpdateError())
-       console.log(err.response.data)
-     })
-  }
-
-  useEffect(() =>{
-    getAllAttendance()
-  },[updated])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,9 +116,9 @@ const AttendanceDetails = (props) => {
         {
           value && edit ? (
             <View style={styles.iconTick}>
-              <Pressable onPress={() => handleUpdate()}>
+              <TouchableOpacity onPress={() => handleUpdate()}>
                 <Feather name="check" size={32} color='white' />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           ) : null}
       </View>

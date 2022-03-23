@@ -70,7 +70,7 @@
               })
               .catch((err) => {
                 dispatch(updateError())
-                setError(err.response.data)
+                setError(err.response.data.error)
               })
             }}
            validationSchema={loginValidationSchema}
