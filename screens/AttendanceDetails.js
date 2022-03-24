@@ -30,7 +30,7 @@ const AttendanceDetails = (props) => {
   const handleUpdate = async() => {
     await axios({
       method: 'put',
-      url:`http://172.25.5.86:5000/api/v1/attendance/${id}`,
+      url:`http://192.168.0.105:5000/api/v1/attendance/${id}`,
       headers: {token: token},
       data: status,
      })
