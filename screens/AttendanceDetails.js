@@ -24,7 +24,7 @@ const AttendanceDetails = (props) => {
   const status = {
     "status": value
   }
-  
+
   const id = item.id
  
   const handleUpdate = async() => {
@@ -42,6 +42,7 @@ const AttendanceDetails = (props) => {
           fontFamily:'DMSans-Regular'
         },
       })
+      setUpdated(true)
      })
      .catch((err) => {
        console.log(err)
