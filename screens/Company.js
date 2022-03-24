@@ -6,21 +6,45 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import SmallCard from "../components/SmallCard";
 import jwt_decode from "jwt-decode";
-import DecodeJwt from "../utils/decodeJwt";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import Constants from "expo-constants";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import colors from "../assets/colors/colors";
 import tw from "twrnc";
 import { Dimensions } from "react-native";
 const windowHeight = Dimensions.get("window").height;
 import { Ionicons } from "@expo/vector-icons";
-
+import EmptyScreen from "../components/Empty";
 const Company = ({ navigation, route }) => {
-  const {token} = route.params;
-  console.log(token);
+  const [error, setError] = useState("");
+  const [company, setCompany] = useState();
+
+  const { token } = route.params;
+  var adminId = jwt_decode(token.toString());
+
+  const getCompanyDetails = async () => {
+    await axios({
+      method: "get",
+      url: `http://192.168.0.105:5000/api/v1/company/admin/${adminId.user}`,
+      headers: { token: token },
+    })
+      .then((res) => {
+        // console.log(res.data);
+        setCompany(res.data.admin[0]);
+      })
+      .catch((err) => {
+        setError(err.response.data.error);
+      });
+  };
+
+  useEffect(() => {
+    getCompanyDetails();
+  }, []);
+  console.log(company);
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -30,7 +54,7 @@ const Company = ({ navigation, route }) => {
           justifyContent: "space-between",
         }}
       >
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
           <View style={styles.square}>
             <Ionicons name="chevron-back" size={22} />
           </View>
@@ -61,12 +85,27 @@ const Company = ({ navigation, route }) => {
           source={require("../assets/Group.png")}
         />
       </View>
-      <View style={styles.registerCompany}>
-        <Text style={[tw`text-xl text-black`, { fontFamily: "DMSans-Bold" }]}>
-          Its seems like you don't have any company yet.
-          {"\n"}
-          Click the button below to add your Company.
-        </Text>
+      <View style={styles.bodyHeight}>
+        <View style={styles.Company}>
+          <Text style={styles.CompanyNameText}>{company.company_name}</Text>
+        </View>
+
+        <SmallCard
+          title={"Add a Employee"}
+          subtitle={"Add Employee manually"}
+          image={"person-outline"}
+          key={1}
+          navigation={navigation}
+          link={"Employee"}
+        />
+        <SmallCard
+          title={"Add Employees"}
+          subtitle={"Add Employee from a CSV file"}
+          image={"people-outline"}
+          key={2}
+          navigation={navigation}
+          link={"Employee"}
+        />
       </View>
     </SafeAreaView>
   );
@@ -95,6 +134,7 @@ const styles = StyleSheet.create({
   bodyHeight: {
     height: windowHeight,
     backgroundColor: "white",
+    borderRadius: 25,
   },
   square: {
     height: 40,
@@ -110,9 +150,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 1,
     elevation: 2,
-  },
-  registerCompany: {
-    marginTop: 20,
-    alignItems: "center",
   },
 });
