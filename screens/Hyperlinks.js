@@ -15,7 +15,7 @@ import { Dimensions } from "react-native";
 import { useState } from "react";
 import HyperlinkCard from "../components/HyperlinkCard";
 import Constants from "expo-constants";
-
+import createHyperlinkModal from "../components/createHyperlinkModal";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -87,19 +87,19 @@ const Hyperlinks = () => {
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
             />
-            <View style={styles.fabPosition}>
-              <FAB
-                style={styles.fab}
-                small={false}
-                icon="plus"
-                theme={{
-                  colors: {
-                    accent: "#373A4E",
-                  },
-                }}
-                onPress={() => console.log("Pressed")}
-              />
-            </View>
+          </View>
+          <View style={styles.fabPosition}>
+            <FAB
+              style={styles.fab}
+              small={false}
+              icon="plus"
+              theme={{
+                colors: {
+                  accent: "#373A4E",
+                },
+              }}
+              onPress={() => navigation.navigate(createHyperlinkModal)}
+            />
           </View>
         </View>
       </ScrollView>
