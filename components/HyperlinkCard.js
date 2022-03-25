@@ -45,7 +45,7 @@ const HyperlinkCard = ({ title, subtitle, image, navigation, link }) => {
               {subtitle}
             </Text>
           </View>
-          <Pressable onPress={() => navigation.navigate(link)}>
+          <Pressable onPress={() => navigation.navigate()}>
             <View style={styles.rounded}>
               <Image
                 style={styles.images}
