@@ -30,7 +30,7 @@ const RegisterCompany = ({ navigation, route }) => {
 
   const { token } = route.params;
   const dispatch = useDispatch();
-
+  console.log(token);
   const data = {
     company_name: name,
     company_email: email,
@@ -120,7 +120,6 @@ const RegisterCompany = ({ navigation, route }) => {
             onChangeText={setName}
           ></TextInput>
         </View>
-
         <View style={styles.textBackground}>
           <Text style={styles.header}>Company Email</Text>
           <TextInput

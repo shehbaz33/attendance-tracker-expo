@@ -67,6 +67,7 @@ const Login = ({ navigation }) => {
                   }
                 };
                 storeData();
+                console.log(res.data.token);
               })
               .catch((err) => {
                 dispatch(updateError());

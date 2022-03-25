@@ -6,12 +6,11 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  FlatList,
-  ActivityIndicator,
-  ScrollView,
-  Pressable,
 } from "react-native";
-import jwt_decode from "jwt-decode";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import Constants from "expo-constants";
@@ -20,46 +19,53 @@ import colors from "../assets/colors/colors";
 import tw from "twrnc";
 import { Dimensions } from "react-native";
 const windowHeight = Dimensions.get("window").height;
-import { Ionicons, Feather } from "@expo/vector-icons";
-import SmallCard from "../components/SmallCard";
+import { Ionicons } from "@expo/vector-icons";
 
-const Employee = ({ navigation, route }) => {
-  const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [add, setAdd] = useState(false);
+const AddEmployee = ({ navigation, route }) => {
+  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
   const { token } = route.params;
-  var adminId = jwt_decode(token.toString());
 
-  const getEmployeesList = async () => {
-    setLoading(true);
+  const data = {
+    name: name,
+    email: email,
+    phone_no: phone,
+  };
+  const registerEmployee = async () => {
     await axios({
-      method: "get",
-      url: `http://192.168.0.105:5000/api/v1/employee/company/${adminId.user}`,
+      method: "post",
+      url: `http://192.168.0.105:5000/api/v1/employee`,
+      data: data,
       headers: { token: token },
     })
       .then((res) => {
-        setEmployees(res.data.employee);
-        setLoading(false);
+        console.log(res.data);
+        setName("");
+        setEmail("");
+        setPhone("");
+        showMessage({
+          message: "Employee Added Successfully",
+          type: "success",
+          style: {
+            fontFamily: "DMSans-Regular",
+          },
+        });
       })
       .catch((err) => {
-        setError(err.response.data.error);
+        setError(err.response.data.message);
+        console.log(err.response.data.message);
+        showMessage({
+          message: err.response.data.message,
+          type: "warning",
+          style: {
+            fontFamily: "DMSans-Regular",
+          },
+        });
       });
   };
-
-  useEffect(() => {
-    getEmployeesList();
-  }, []);
-
-  const renderItem = ({ item }) => (
-    <SmallCard
-      title={item.name}
-      subtitle={item.phone_no}
-      image={"person-outline"}
-      key={item.employee_id}
-      navigation={navigation}
-      link={"EmployeeDetails"}
-    />
-  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,7 +99,7 @@ const Employee = ({ navigation, route }) => {
           <Text
             style={[tw`text-3xl text-black`, { fontFamily: "DMSans-Bold" }]}
           >
-            Employees
+            Add Employee
           </Text>
         </View>
         <Image
@@ -102,45 +108,58 @@ const Employee = ({ navigation, route }) => {
         />
       </View>
       <View style={styles.bodyHeight}>
-        {loading ? (
-          <View style={{ flex: 1, marginTop: 50, justifyContent: "center" }}>
-            <ActivityIndicator size="large" color="#D46200" />
-          </View>
-        ) : (
-          <View>
-            <View style={tw`mt-4`}>
-              <Text
-                style={{
-                  color: colors.textSecondary,
-                  marginLeft: 30,
-                  fontSize: 14,
-                  fontFamily: "DMSans-Regular",
-                }}
-              >
-                Tap on employee to edit or delete.
-              </Text>
+        <View style={tw`mt-4`}>
+          <Text
+            style={{
+              color: colors.textSecondary,
+              marginLeft: 30,
+              fontSize: 14,
+              fontFamily: "DMSans-Regular",
+            }}
+          >
+            Enter your Employee details.
+          </Text>
+        </View>
+        <View style={styles.textBackground}>
+          <Text style={styles.header}>Name</Text>
+          <TextInput
+            style={styles.details}
+            placeholder="Jone Doe"
+            value={name}
+            onChangeText={setName}
+          ></TextInput>
+        </View>
 
-              <FlatList
-                nestedScrollEnabled={true}
-                scrollEnabled={true}
-                data={employees}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.employee_id}
-              />
-            </View>
-            <View style={styles.iconEdit}>
-              <Pressable onPress={() => navigation.navigate("AddEmployee")}>
-                <Feather name="plus" size={32} color={colors.background} />
-              </Pressable>
-            </View>
-          </View>
-        )}
+        <View style={styles.textBackground}>
+          <Text style={styles.header}>Email</Text>
+          <TextInput
+            style={styles.details}
+            placeholder="johndoe@gptw.com"
+            value={email}
+            onChangeText={setEmail}
+          ></TextInput>
+        </View>
+        <View style={styles.textBackground}>
+          <Text style={styles.header}>Phone Number</Text>
+          <TextInput
+            style={styles.details}
+            placeholder="+917894567890"
+            value={phone}
+            onChangeText={setPhone}
+          ></TextInput>
+        </View>
+        <View style={{ marginLeft: 30, marginRight: 30, marginTop: 20 }}>
+          <TouchableOpacity onPress={registerEmployee} style={[styles.button]}>
+            <Text style={styles.text}>Add</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      <FlashMessage position="top" />
     </SafeAreaView>
   );
 };
 
-export default Employee;
+export default AddEmployee;
 
 const styles = StyleSheet.create({
   container: {
@@ -212,13 +231,5 @@ const styles = StyleSheet.create({
   details: {
     fontSize: 18,
     fontFamily: "DMSans-Regular",
-  },
-  iconEdit: {
-    position: "absolute",
-    right: 30,
-    padding: 12,
-    borderRadius: 50,
-    backgroundColor: colors.accents,
-    top: 330,
   },
 });

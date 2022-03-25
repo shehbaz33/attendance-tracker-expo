@@ -5,9 +5,14 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  Button,
+  ActivityIndicator,
+  Pressable,
+  TextInput,
 } from "react-native";
-import SmallCard from "../components/SmallCard";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 import jwt_decode from "jwt-decode";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -17,41 +22,95 @@ import colors from "../assets/colors/colors";
 import tw from "twrnc";
 import { Dimensions } from "react-native";
 const windowHeight = Dimensions.get("window").height;
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import EmptyScreen from "../components/Empty";
+
 const Company = ({ navigation, route }) => {
   const [error, setError] = useState("");
   const [company, setCompany] = useState();
+  const [loading, setLoading] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const { token } = route.params;
   var adminId = jwt_decode(token.toString());
-  // register company and dispatch to store
-  const companyDetails = useSelector((state) => state.company.companyDetails);
-  const isCompanyRegistered = useSelector(
-    (state) => state.company.isCompanyRegistered
-  );
-  // console.log(companyDetails);
-  // console.log(isCompanyRegistered);
-  // console.log(company);
-  // console.log(adminId);
+
   const getCompanyDetails = async () => {
+    setLoading(true);
     await axios({
       method: "get",
       url: `http://192.168.0.105:5000/api/v1/company/admin/${adminId.user}`,
       headers: { token: token },
     })
       .then((res) => {
-        // console.log(res.data);
         setCompany(res.data.admin[0]);
+        setName(res.data.admin[0].company_name);
+        setEmail(res.data.admin[0].company_email);
+        setPhone(res.data.admin[0].company_phone);
+        setLoading(false);
       })
       .catch((err) => {
         setError(err.response.data.error);
       });
   };
 
+  const handleUpdate = async () => {
+    const updatedData = {
+      company_name: name,
+      company_email: email,
+      company_phone: phone,
+    };
+    await axios({
+      method: "put",
+      url: `http://192.168.0.105:5000/api/v1/company/${company.company_id}`,
+      headers: { token: token },
+      data: updatedData,
+    })
+      .then((res) => {
+        showMessage({
+          message: "Updated successfully",
+          type: "success",
+          style: {
+            fontFamily: "DMSans-Regular",
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     getCompanyDetails();
   }, []);
+
+  const checkEmpty = () => {
+    if (loading) {
+      return (
+        <View style={{ flex: 1, marginTop: 50, justifyContent: "center" }}>
+          <ActivityIndicator size="large" color="#D46200" />
+        </View>
+      );
+    } else if (company === undefined) {
+      return (
+        <View>
+          <EmptyScreen
+            title={"Looks like you don't have any register company."}
+          />
+          <View style={{ marginLeft: 30, marginRight: 30 }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("RegisterCompany")}
+              style={[styles.button]}
+            >
+              <Text style={styles.text}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,44 +155,80 @@ const Company = ({ navigation, route }) => {
       <View style={styles.bodyHeight}>
         {company ? (
           <View>
+            <View style={tw`mt-4`}>
+              <Text
+                style={{
+                  color: colors.textSecondary,
+                  marginLeft: 30,
+                  fontSize: 14,
+                  fontFamily: "DMSans-Regular",
+                }}
+              >
+                Check/Edit Company details
+              </Text>
+            </View>
             <View style={styles.textBackground}>
               <Text style={styles.header}>Company Name</Text>
-              <Text style={styles.details}>{company.company_name}</Text>
+              {!edit ? (
+                <Text style={styles.details}>{company.company_name}</Text>
+              ) : (
+                <TextInput
+                  style={styles.details}
+                  value={name}
+                  onChangeText={setName}
+                ></TextInput>
+              )}
             </View>
-
-            <SmallCard
-              title={"Add a Employee"}
-              subtitle={"Add Employee manually"}
-              image={"person-outline"}
-              key={1}
-              navigation={navigation}
-              link={"Employee"}
-            />
-            <SmallCard
-              title={"Add Employees"}
-              subtitle={"Add Employee from a CSV file"}
-              image={"people-outline"}
-              key={2}
-              navigation={navigation}
-              link={"EmployeeCSV"}
-            />
+            <View style={styles.textBackground}>
+              <Text style={styles.header}>Company Email</Text>
+              {!edit ? (
+                <Text style={styles.details}>{company.company_email}</Text>
+              ) : (
+                <TextInput
+                  style={styles.details}
+                  value={email}
+                  onChangeText={setEmail}
+                ></TextInput>
+              )}
+            </View>
+            <View style={styles.textBackground}>
+              <Text style={styles.header}>Phone Number</Text>
+              {!edit ? (
+                <Text style={styles.details}>{company.company_phone}</Text>
+              ) : (
+                <TextInput
+                  style={styles.details}
+                  value={phone}
+                  onChangeText={setPhone}
+                ></TextInput>
+              )}
+            </View>
+            {!edit ? (
+              <View style={styles.iconEdit}>
+                <Pressable onPress={() => setEdit(!edit)}>
+                  <Feather name="edit-2" size={32} color={colors.accents} />
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.iconX}>
+                <Pressable onPress={() => setEdit(!edit)}>
+                  <Feather name="x" size={32} color="white" />
+                </Pressable>
+              </View>
+            )}
+            {name && phone && email && edit ? (
+              <View style={styles.iconTick}>
+                <TouchableOpacity onPress={() => handleUpdate()}>
+                  <Feather name="check" size={32} color="white" />
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
         ) : (
-          <View>
-            <EmptyScreen
-              title={"Looks like you don't have any register company."}
-            />
-            <View style={{ marginLeft: 30, marginRight: 30 }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("RegisterCompany")}
-                style={[styles.button]}
-              >
-                <Text style={styles.text}>Register</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <View>{checkEmpty()}</View>
         )}
       </View>
+      <FlashMessage position="top" />
     </SafeAreaView>
   );
 };
@@ -193,9 +288,14 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans-Regular",
   },
   textBackground: {
-    marginLeft: 15,
-    marginTop: 15,
-    marginRight: 15,
+    marginLeft: 30,
+    backgroundColor: colors.background,
+    marginTop: 20,
+    marginRight: 30,
+    padding: 10,
+    borderRadius: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.accents,
   },
   header: {
     color: colors.accents,
@@ -203,7 +303,42 @@ const styles = StyleSheet.create({
     fontFamily: "DMSans-Regular",
   },
   details: {
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: "DMSans-Regular",
+  },
+
+  iconEdit: {
+    position: "absolute",
+    right: 30,
+    padding: 12,
+    borderRadius: 50,
+    backgroundColor: colors.background,
+    bottom: -130,
+  },
+  iconX: {
+    position: "absolute",
+    right: 30,
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: colors.accents,
+    bottom: -130,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  iconTick: {
+    position: "absolute",
+    right: 100,
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: colors.accents,
+    bottom: -130,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 2,
   },
 });

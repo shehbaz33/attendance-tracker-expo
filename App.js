@@ -9,6 +9,7 @@ import Login from "./screens/Login";
 import Company from "./screens/Company";
 import RegisterCompany from "./screens/RegisterCompany";
 import Employee from "./screens/Employee";
+import AddEmployee from "./screens/AddEmployee";
 import EmployeeCSV from "./screens/EmployeeCSV";
 import Attendance from "./screens/Attendance";
 import Hyperlinks from "./screens/Hyperlinks";
@@ -79,6 +80,12 @@ function App() {
             <Stack.Screen
               name="Employee"
               component={Employee}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="AddEmployee"
+              component={AddEmployee}
               options={{ headerShown: false }}
               initialParams={{ token: localToken }}
             />
