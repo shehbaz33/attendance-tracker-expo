@@ -17,6 +17,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
+import { Ionicons, Feather } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator();
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -50,26 +51,68 @@ function App() {
   getData();
 
   return (
-    // <NavigationContainer>
-    //     <Stack.Navigator>
-    //       {
-    //         !localToken ? (
-    //           <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
-    //         ) : (
-    //           <>
-    //             <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown:false}} />
-    //             <Stack.Screen name="Company" component={Company} options={{headerShown:false}} />
-    //             <Stack.Screen name="Attendance" component={Attendance} options={{headerShown:false}} />
-    //             <Stack.Screen name="Hyperlinks" component={Hyperlinks} options={{headerShown:false}} />
-    //             <Stack.Screen name="Schedule" component={Schedule} options={{headerShown:false}} />
-    //             <Stack.Screen name="StatusReport" component={StatusReport} options={{headerShown:false}} />
-    //             <Stack.Screen name="AttendanceDetails" component={AttendanceDetails} options={{headerShown:false}} />
-    //           </>
-    //         )
-    //       }
-    //     </Stack.Navigator>
-    // </NavigationContainer>
-    <Hyperlinks />
+    <NavigationContainer>
+      <Stack.Navigator>
+        {!localToken ? (
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <>
+            <Stack.Screen
+              name="Dashboard"
+              component={Dashboard}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Company"
+              component={Company}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Attendance"
+              component={Attendance}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Hyperlinks"
+              component={Hyperlinks}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Schedule"
+              component={Schedule}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Notification"
+              component={Notification}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="StatusReport"
+              component={StatusReport}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="AttendanceDetails"
+              component={AttendanceDetails}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

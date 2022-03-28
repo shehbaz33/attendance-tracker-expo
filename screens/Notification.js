@@ -8,10 +8,13 @@ import {
   ScrollView,
   TextInput,
   Button,
+  TouchableOpacity,
   Pressable,
 } from "react-native";
 import Constants from "expo-constants";
 import tw from "twrnc";
+import axios from "axios";
+
 import { Card } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { useState } from "react";
@@ -21,53 +24,59 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 TextInput.defaultProps.selectionColor = "black";
 
-const weekDays = [
-  {
-    label: "Monday",
-    value: "monday",
-  },
-  {
-    label: "Tuesday",
-    value: "tuesday",
-  },
-  {
-    label: "Wednesday",
-    value: "wednesday",
-  },
-  {
-    label: "Thursday",
-    value: "thursday",
-  },
-  {
-    label: "Friday",
-    value: "friday",
-  },
-  {
-    label: "Saturday",
-    value: "saturday",
-  },
-  {
-    label: "Sunday",
-    value: "sunday",
-  },
-];
-
-const Notification = () => {
+const Notification = ({ navigation, route }) => {
+  const [error, setError] = useState("");
   const [title, settitle] = useState("");
   const [description, setdescription] = useState("");
-  // const [selectedDay, setselectedDay] = useState();
-  // const [selectedHours, setSelectedHours] = useState(0);
-  // const [selectedMinutes, setSelectedMinutes] = useState(0);
+
+  const { token } = route.params;
+  var adminId = jwt_decode(token.toString());
+
+  const data = {
+    title: title,
+    description: description,
+  };
+
+  const createNotification = async () => {
+    await axios({
+      method: "post",
+      url: `http://192.168.1.101:5000/api/v1/notification`,
+      data: data,
+      headers: { token: token },
+    })
+      .then((res) => {
+        console.log(res.data);
+        settitle("");
+        setdescription("");
+        showMessage({
+          message: "Notification Added Successfully",
+          type: "success",
+          style: {
+            fontFamily: "DMSans-Regular",
+          },
+        });
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+        console.log(err.response.data.message);
+        showMessage({
+          message: err.response.data.message,
+          type: "warning",
+          style: {
+            fontFamily: "DMSans-Regular",
+          },
+        });
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          marginTop: 20,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+      {/* <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
+        <View style={styles.square}>
+          <Ionicons name="chevron-back" size={22} />
+        </View>
+      </TouchableOpacity> */}
+      <View style={styles.mainView}>
         <View>
           <Image
             style={styles.image}
@@ -77,15 +86,7 @@ const Notification = () => {
           />
         </View>
       </View>
-      <View
-        style={{
-          marginTop: 20,
-          alignItems: "center",
-          marginRight: 5,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.heading}>
         <View style={[tw`border-b-4 border-[#D46200]`, { marginLeft: 20 }]}>
           <Text
             style={[tw`text-3xl text-black`, { fontFamily: "DMSans-Bold" }]}
@@ -99,7 +100,7 @@ const Notification = () => {
           source={require("../assets/notification.png")}
         />
       </View>
-      <ScrollView>
+      <View>
         <View style={styles.bodyHeight}>
           <View style={styles.dash}>
             <Image source={require("../assets/dash.png")} />
@@ -116,11 +117,16 @@ const Notification = () => {
           <View style={([styles.textStyle], [styles.fieldSet])}>
             <Text style={styles.legend}>Title</Text>
             <TextInput
+              type="text"
+              name="title"
+              required
+              id="title"
               value={title}
-              onChangeText={(title) => settitle(title)}
+              onChangeText={settitle}
               placeholder={"Enter Title"}
               style={([styles.input], { paddingTop: 10, paddingBottom: 10 })}
             />
+            <Text style={{ color: "red" }}>{title}</Text>
           </View>
 
           <View style={([styles.textStyle], [styles.fieldSet])}>
@@ -130,42 +136,14 @@ const Notification = () => {
               style={
                 (styles.input, { textAlignVertical: "top", paddingTop: 15 })
               }
+              placeholder={"Enter description here..."}
               includeFontPadding={false}
               multiline={true}
               numberOfLines={7}
-              onChangeText={(description) => setdescription(description)}
+              onChangeText={setdescription}
             />
+            <Text style={{ color: "red" }}>{description}</Text>
           </View>
-          {/* <View style={([styles.textStyle], [styles.fieldSet])}>
-            <Text style={styles.legend}>Select Day</Text>
-            <RNPickerSelect
-              placeholder={{}}
-              items={weekDays}
-              selectedDay={selectedDay}
-              onChange={(dayName) => {
-                setselectedDay(dayName);
-              }}
-              InputAccessoryView={() => null}
-            />
-          </View>
-          <View style={([styles.textStyle], [styles.fieldSet])}>
-            <Text style={styles.legend}>Select Time</Text>
-            <View>
-              <View style={{ marginTop: 10, marginRight: 100 }}>
-                <TimePicker
-                  selectedHours={selectedHours}
-                  selectedMinutes={selectedMinutes}
-                  onChange={(hours, minutes) => {
-                    setSelectedHours(hours);
-                    setSelectedMinutes(minutes);
-                  }}
-                />
-              </View>
-              <View>
-                <Image source={require("../assets/clock.png")} />
-              </View>
-            </View>
-          </View> */}
           <View style={{ marginLeft: 30, marginRight: 30 }}>
             <Pressable
               style={[
@@ -174,12 +152,13 @@ const Notification = () => {
                   backgroundColor: "#373A4E",
                 },
               ]}
+              onPress={createNotification}
             >
               <Text style={styles.text}>Send</Text>
             </Pressable>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -197,6 +176,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "DMSans-Regular",
     textAlign: "left",
+  },
+  heading: {
+    marginTop: 20,
+    alignItems: "center",
+    marginRight: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  mainView: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   dash: {
     alignItems: "center",
