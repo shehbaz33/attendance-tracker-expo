@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const attendanceSlice = createSlice({
   name: "attendance",
   initialState: {
-    status: null,
+    attendance: [],
     pending: false,
     error: false,
   },
@@ -13,7 +13,7 @@ export const attendanceSlice = createSlice({
     },
     AttendanceUpdateSuccess: (state, action) => {
       state.pending = false;
-      state.status = action.payload;
+      state.attendance = action.payload;
     },
     AttendanceUpdateError: (state) => {
       state.error = true;

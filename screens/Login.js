@@ -17,7 +17,7 @@ import {
   TextInput,
   Button,
   useColorScheme,
-  Pressable,
+  TouchableOpacity,
   View,
   Image,
 } from "react-native";
@@ -67,10 +67,11 @@ const Login = ({ navigation }) => {
                   }
                 };
                 storeData();
+                console.log(res.data.token);
               })
               .catch((err) => {
                 dispatch(updateError());
-                setError(err.response.data);
+                setError(err.response.data.error);
               });
           }}
           validationSchema={loginValidationSchema}
@@ -106,7 +107,7 @@ const Login = ({ navigation }) => {
                 <Text style={styles.error}>{errors.password}</Text>
               ) : null}
               <View style={{ marginLeft: 30, marginRight: 30 }}>
-                <Pressable
+                <TouchableOpacity
                   style={[
                     styles.button,
                     {
@@ -117,7 +118,7 @@ const Login = ({ navigation }) => {
                   disabled={!isValid}
                 >
                   <Text style={styles.text}>Login</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
               <Text style={styles.error}>{error ? error : null}</Text>
             </View>

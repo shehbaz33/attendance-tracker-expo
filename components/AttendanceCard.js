@@ -13,10 +13,10 @@ const smallCard = ({item,navigation}) => {
                {item.name}
             </Text>
             <Text style={{fontSize:12,color:colors.textSecondary,fontFamily:'DMSans-Regular'}}>
-                {item.company}
+                {item.company_name}
             </Text>
             <Text style={{fontSize:12,color:colors.accents,fontFamily:'DMSans-Regular'}}>
-                {item.status}
+                {item.attendance_type}
             </Text>
         </View>
         <Pressable onPress={() => navigation.navigate('AttendanceDetails',{item})}>

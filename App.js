@@ -7,9 +7,12 @@ import colors from "./assets/colors/colors";
 import Dashboard from "./screens/Dashboard";
 import Login from "./screens/Login";
 import Company from "./screens/Company";
+import RegisterCompany from "./screens/RegisterCompany";
+import Employee from "./screens/Employee";
+import AddEmployee from "./screens/AddEmployee";
+import EmployeeCSV from "./screens/EmployeeCSV";
 import Attendance from "./screens/Attendance";
 import Hyperlinks from "./screens/Hyperlinks";
-import Schedule from "./screens/Schedule";
 import Notification from "./screens/Notification";
 import StatusReport from "./screens/StatusReport";
 import AttendanceDetails from "./screens/AttendanceDetails";
@@ -17,15 +20,16 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import { Ionicons, Feather } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator();
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateStart, updateSuccess, updateError } from "./redux/userSlice";
 
 function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
+  const dispatch = useDispatch();
   const [localToken, setLocalToken] = useState();
-  const token = useSelector((state) => state.user.token);
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const loadFont = async () => {
     await fetchFonts();
   };
@@ -42,6 +46,7 @@ function App() {
     try {
       const value = await AsyncStorage.getItem("token");
       if (value !== null) {
+        dispatch(updateSuccess(value));
         setLocalToken(value);
       }
     } catch (e) {
@@ -53,23 +58,40 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!localToken ? (
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <>
+        {isLoggedIn ? (
+          <Stack.Group>
             <Stack.Screen
               name="Dashboard"
               component={Dashboard}
               options={{ headerShown: false }}
-              initialParams={{ token: localToken }}
             />
             <Stack.Screen
               name="Company"
               component={Company}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="RegisterCompany"
+              component={RegisterCompany}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="Employee"
+              component={Employee}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="AddEmployee"
+              component={AddEmployee}
+              options={{ headerShown: false }}
+              initialParams={{ token: localToken }}
+            />
+            <Stack.Screen
+              name="EmployeeCSV"
+              component={EmployeeCSV}
               options={{ headerShown: false }}
               initialParams={{ token: localToken }}
             />
@@ -83,31 +105,30 @@ function App() {
               name="Hyperlinks"
               component={Hyperlinks}
               options={{ headerShown: false }}
-              initialParams={{ token: localToken }}
-            />
-            <Stack.Screen
-              name="Schedule"
-              component={Schedule}
-              options={{ headerShown: false }}
-              initialParams={{ token: localToken }}
             />
             <Stack.Screen
               name="Notification"
               component={Notification}
               options={{ headerShown: false }}
-              initialParams={{ token: localToken }}
             />
             <Stack.Screen
               name="StatusReport"
               component={StatusReport}
               options={{ headerShown: false }}
-              initialParams={{ token: localToken }}
             />
             <Stack.Screen
               name="AttendanceDetails"
               component={AttendanceDetails}
               options={{ headerShown: false }}
               initialParams={{ token: localToken }}
+            />
+          </Stack.Group>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
             />
           </>
         )}
