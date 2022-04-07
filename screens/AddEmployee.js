@@ -37,7 +37,7 @@ const AddEmployee = ({ navigation, route }) => {
   const registerEmployee = async () => {
     await axios({
       method: "post",
-      url: `http://192.168.0.105:5000/api/v1/employee`,
+      url: `http://192.168.0.103:5000/api/v1/employee`,
       data: data,
       headers: { token: token },
     })
@@ -148,9 +148,19 @@ const AddEmployee = ({ navigation, route }) => {
             onChangeText={setPhone}
           ></TextInput>
         </View>
-        <View style={{ marginLeft: 30, marginRight: 30, marginTop: 20 }}>
+        <View style={{ marginLeft: 30, marginRight: 30, marginTop: 15 }}>
           <TouchableOpacity onPress={registerEmployee} style={[styles.button]}>
             <Text style={styles.text}>Add</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginLeft: 30, marginRight: 30, marginTop: 5 }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("EmployeeCSV");
+            }}
+            style={[styles.button]}
+          >
+            <Text style={styles.text}>Upload CSV</Text>
           </TouchableOpacity>
         </View>
       </View>

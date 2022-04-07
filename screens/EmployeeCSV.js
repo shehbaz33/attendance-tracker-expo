@@ -6,25 +6,37 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Button,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import DocumentPicker, {
+  DirectoryPickerResponse,
+  DocumentPickerResponse,
+  isInProgress,
+  types,
+} from "react-native-document-picker";
 import axios from "axios";
 import Constants from "expo-constants";
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import colors from "../assets/colors/colors";
 import tw from "twrnc";
 import { Dimensions } from "react-native";
 const windowHeight = Dimensions.get("window").height;
 import { Ionicons } from "@expo/vector-icons";
-import {
-  updateCompanyStart,
-  updateCompanySuccess,
-  updateCompanyError,
-} from "../redux/companySlice";
 
 const EmployeeCSV = ({ navigation, route }) => {
-  const { token } = route.params;
-  const dispatch = useDispatch();
+  const [fileResponse, setFileResponse] = useState([]);
+
+  const handleDocumentSelection = useCallback(async () => {
+    try {
+      const response = await DocumentPicker.pick({
+        presentationStyle: "fullScreen",
+        type: [types.pdf],
+      });
+      setFileResponse(response);
+    } catch (err) {
+      console.warn(err);
+    }
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,8 +70,7 @@ const EmployeeCSV = ({ navigation, route }) => {
           <Text
             style={[tw`text-3xl text-black`, { fontFamily: "DMSans-Bold" }]}
           >
-            Upload{"\n"}
-            CSV
+            Upload CSV
           </Text>
         </View>
         <Image
@@ -68,10 +79,21 @@ const EmployeeCSV = ({ navigation, route }) => {
         />
       </View>
       <View style={styles.bodyHeight}>
-        <View style={{ marginLeft: 30, marginRight: 30, marginTop: 20 }}>
-          <TouchableOpacity style={[styles.button]}>
-            <Text style={styles.text}>Register</Text>
-          </TouchableOpacity>
+        <View style={styles.uploadContainer}>
+          {fileResponse.map((file, index) => (
+            <Text
+              key={index.toString()}
+              style={styles.uri}
+              numberOfLines={1}
+              ellipsizeMode={"middle"}
+            >
+              {file?.uri}
+            </Text>
+          ))}
+          <Button title="Select 📑" onPress={handleDocumentSelection} />
+          {/* <TouchableOpacity style={[styles.button]}>
+            <Text style={styles.text}>Upload</Text>
+          </TouchableOpacity> */}
         </View>
       </View>
     </SafeAreaView>
@@ -101,6 +123,7 @@ const styles = StyleSheet.create({
   bodyHeight: {
     height: windowHeight,
     backgroundColor: "white",
+    elevation: 10,
     borderRadius: 25,
   },
   square: {
@@ -125,11 +148,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 10,
     elevation: 3,
-    backgroundColor: colors.button,
+
+    backgroundColor: colors.background,
   },
   text: {
-    color: "white",
+    color: colors.button,
     fontSize: 18,
+    fontWeight: "bold",
     fontFamily: "DMSans-Regular",
   },
   textBackground: {
@@ -150,5 +175,15 @@ const styles = StyleSheet.create({
   details: {
     fontSize: 18,
     fontFamily: "DMSans-Regular",
+  },
+  uploadContainer: {
+    borderColor: colors.accents,
+    borderWidth: 3,
+    margin: 50,
+    borderRadius: 10,
+    borderStyle: "dashed",
+    height: 310,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

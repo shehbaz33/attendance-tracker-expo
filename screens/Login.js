@@ -21,6 +21,10 @@ import {
   View,
   Image,
 } from "react-native";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 import { Formik } from "formik";
 import * as yup from "yup";
 import colors from "../assets/colors/colors";
@@ -53,7 +57,7 @@ const Login = ({ navigation }) => {
             dispatch(updateStart());
             await axios({
               method: "post",
-              url: "http://192.168.0.105:5000/api/v1/login",
+              url: "http://192.168.0.103:5000/api/v1/login",
               data: values,
               headers: { "Content-Type": "application/json" },
             })
@@ -67,6 +71,13 @@ const Login = ({ navigation }) => {
                   }
                 };
                 storeData();
+                showMessage({
+                  message: "Login successfully",
+                  type: "success",
+                  style: {
+                    fontFamily: "DMSans-Regular",
+                  },
+                });
                 console.log(res.data.token);
               })
               .catch((err) => {
@@ -125,6 +136,7 @@ const Login = ({ navigation }) => {
           )}
         </Formik>
       </View>
+      <FlashMessage position="top" />
     </SafeAreaView>
   );
 };

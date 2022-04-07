@@ -40,7 +40,7 @@ const RegisterCompany = ({ navigation, route }) => {
     dispatch(updateCompanyStart());
     await axios({
       method: "post",
-      url: `http://192.168.0.105:5000/api/v1/company`,
+      url: `http://192.168.0.103:5000/api/v1/company`,
       data: data,
       headers: { token: token },
     })

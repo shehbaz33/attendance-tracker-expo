@@ -34,7 +34,7 @@ const Employee = ({ navigation, route }) => {
     setLoading(true);
     await axios({
       method: "get",
-      url: `http://192.168.0.105:5000/api/v1/employee/company/${adminId.user}`,
+      url: `http://192.168.0.103:5000/api/v1/employee/company/${adminId.user}`,
       headers: { token: token },
     })
       .then((res) => {

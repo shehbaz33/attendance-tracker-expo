@@ -9,6 +9,10 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 import Constants from "expo-constants";
 import React from "react";
 import colors from "../assets/colors/colors";
@@ -26,6 +30,20 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const data = [
+  {
+    id: 7,
+    title: "Employee Attendance",
+    subtitle: "View attendance details",
+    image: "people-outline",
+    link: "EmployeeAttendance",
+  },
+  {
+    id: 8,
+    title: "Profile",
+    subtitle: "View attendance details",
+    image: "people-outline",
+    link: "Profile",
+  },
   {
     id: 2,
     title: "Attendance",
@@ -78,6 +96,13 @@ const Dashboard = () => {
   const handleLogout = async () => {
     dispatch(logoutSuccess());
     await AsyncStorage.clear();
+    showMessage({
+      message: "Logout successfully",
+      type: "success",
+      style: {
+        fontFamily: "DMSans-Regular",
+      },
+    });
   };
 
   const renderItem = ({ item }) => (
@@ -143,6 +168,7 @@ const Dashboard = () => {
           />
         </View>
       </View>
+      <FlashMessage position="top" />
     </SafeAreaView>
   );
 };
