@@ -58,7 +58,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {isLoggedIn ? (
+        {/* {isLoggedIn ? ( */}
           <Stack.Group>
             <Stack.Screen
               name="Dashboard"
@@ -123,7 +123,7 @@ function App() {
               initialParams={{ token: localToken }}
             />
           </Stack.Group>
-        ) : (
+        {/* ) : (
           <>
             <Stack.Screen
               name="Login"
@@ -131,7 +131,7 @@ function App() {
               options={{ headerShown: false }}
             />
           </>
-        )}
+        )} */}
       </Stack.Navigator>
     </NavigationContainer>
   );
